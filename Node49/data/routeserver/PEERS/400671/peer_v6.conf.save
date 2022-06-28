@@ -1,0 +1,28 @@
+protocol bgp PEER_AS400671_V6 from ix_peer
+{
+	neighbor	as 400671;
+	neighbor	2407:c280:ee:49::40:0671;
+	description	"400671 - stypr LLC";
+	passive on;protocol bgp PEER_AS400671_V6 from ix_peer
+{
+        neighbor        as 400671;
+        neighbor        2407:c280:ee:49::40:0671;
+        description     "400671 - stypr LLC";
+        passive on;
+        import filter
+
+	import filter
+	{
+		bgp_local_pref = 100;
+		if net.len <= PREFIX_MIN && net ~ PREFIX_AS400671 then accept;
+		if net.len >= PREFIX_MAX then reject;
+		reject;
+	};
+
+	export filter
+	{
+		if ((0,0,400671)) ~ bgp_large_community then reject;
+		if net.len > PREFIX_MIN then reject;
+		accept;
+	};
+}
