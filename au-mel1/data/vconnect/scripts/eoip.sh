@@ -24,7 +24,7 @@ function create_bridge {
 
 function create_eoip {
     set -o pipefail #optional
-    /bin/eoip ${dirCT}/CONFIG_AS$1 ${ipAddr}
+    /bin/eoip ${dirCT}/CONFIG_AS$1 119.42.53.232
 }
 
 function getIP {
