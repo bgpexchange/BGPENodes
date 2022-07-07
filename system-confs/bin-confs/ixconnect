@@ -1,0 +1,51 @@
+#!/bin/bash
+clear
+echo ""
+echo -e "\e[32m ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: \e[1m"
+echo -e "\e[32m '####:'##::::'##:'########:::'######:::'#######::'##::: ##:'########:'########:::'#######::'##::::::: \e[1m";
+echo -e "\e[32m . ##::. ##::'##:: ##.... ##:'##... ##:'##.... ##: ###:: ##:... ##..:: ##.... ##:'##.... ##: ##::::::: \e[1m"
+echo -e "\e[32m : ##:::. ##'##::: ##:::: ##: ##:::..:: ##:::: ##: ####: ##:::: ##:::: ##:::: ##: ##:::: ##: ##::::::: \e[1m"
+echo -e "\e[32m : ##::::. ###:::: ########:: ##::::::: ##:::: ##: ## ## ##:::: ##:::: ########:: ##:::: ##: ##::::::: \e[1m"
+echo -e "\e[32m : ##:::: ## ##::: ##.....::: ##::::::: ##:::: ##: ##. ####:::: ##:::: ##.. ##::: ##:::: ##: ##::::::: \e[1m"
+echo -e "\e[32m : ##::: ##:. ##:: ##:::::::: ##::: ##: ##:::: ##: ##:. ###:::: ##:::: ##::. ##:: ##:::: ##: ##::::::: \e[1m"
+echo -e "\e[32m '####: ##:::. ##: ##::::::::. ######::. #######:: ##::. ##:::: ##:::: ##:::. ##:. #######:: ########: \e[1m"
+echo -e "\e[32m ....::..:::::..::..::::::::::......::::.......:::..::::..:::::..:::::..:::::..:::.......:::........:: \e[1m"
+echo -e "\e[32m :::::::::::::::::::::::::::::::::::: https://www.ixpcontrol.com :::::::::::::::::::::::::::(v 0.1a):: \e[1m"
+echo -e "\e[0m"
+echo ":: IXPControl - Shell Interface ::"
+echo ""
+echo "Select an option:"
+echo "   1) Create GRETap Configuration"
+echo "   2) Create VXLAN Configuration"
+echo "   3) Create EoIP Configuration"
+echo "   4) Exit"
+read -p "Option: " option
+until [[ "$option" =~ ^[1-4]$ ]]; do
+        echo "$option: invalid selection."
+        read -p "Option: " option
+done
+case "$option" in
+		1)
+			read -p "IP Address: " ipaddress
+			read -p "ASN: " asn
+			echo "Creating GRETap Config for $asn"
+			cat >> /opt/ixpcontrol/data/vconnect/configs/gretap/PEER_$asn <<EOL
+{
+        "ipAddress": "$ipaddress",
+        "ASN": "$asn"
+}
+			EOL
+			/opt/ixpcontrol/data/vconnect/scripts/gretap.sh
+
+echo "Configuration file created for $asn & tunnel established"	
+echo ""
+echo ""
+		exit
+		;;
+		
+		
+        4)
+
+	exit
+	;;
+esac
