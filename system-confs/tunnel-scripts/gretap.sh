@@ -1,7 +1,8 @@
 directory="/opt/ixpcontrol/data/vconnect/configs/gretap/PEER_*"
 bridge="br0"
 dirCT="/root/configs/gretap/PEER_AS"
-ipAddr=$(curl -s https://ipv4.ixpcontrol.com)
+v4Addr=$(curl -s https://api.ipify.org)
+v6Addr=$(curl -s https://api6.ipify.org)
 if [ -z "$(ls -A ${directory})" ]; then
   exit
 fi
@@ -23,7 +24,7 @@ function create_bridge {
 
 function create_gre {
     set -o pipefail #optional
-     /usr/sbin/ip link add gretap_AS$1 type gretap local ${ipAddr} remote $2 ttl 255
+     /usr/sbin/ip link add gretap_AS$1 type gretap local ${v4Addr} remote $2 ttl 255
      /usr/sbin/ip link set up dev gretap_AS$1
 #    /usr/bin/docker exec virtual.int /root/gretap.sh $1 $2 $3;
 }

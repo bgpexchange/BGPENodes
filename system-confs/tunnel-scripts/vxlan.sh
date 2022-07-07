@@ -1,8 +1,8 @@
-directory="/opt/ixpcontrol/data/vconnect/configs/eoip/PEER_*"
+directory="/opt/ixpcontrol/data/vconnect/configs/vxlan/PEER_*"
 bridge="br0"
-dirCT="/opt/ixpcontrol/data/vconnect/configs/eoip"
-dockerCT="virtual.int"
-ipAddr=$(curl -s https://ipv4.ixpcontrol.com)
+dirCT="/root/configs/vxlan/PEER_AS"
+v4Addr=$(curl -s https://api.ipify.org)
+v6Addr=$(curl -s https://api6.ipify.org)
 if [ -z "$(ls -A ${directory})" ]; then
   exit
 fi
@@ -19,18 +19,21 @@ function check_bridge {
 
 function create_bridge {
     set -o pipefail #optional
-    /usr/sbin/brctl addif ${bridge} eoip_AS$1 2>/dev/null
+    /usr/sbin/brctl addif ${bridge} vxlan_AS$1 2>/dev/null
 }
 
-function create_eoip {
+function create_vxlan {
     set -o pipefail #optional
-    /bin/eoip ${dirCT}/CONFIG_AS$1 119.42.53.232
+#    /usr/bin/docker exec virtual.int /root/vxlan.sh $1 $2 $3;
+    /usr/sbin/ip link add vxlan_AS$1 type vxlan local ${v4Addr} remote $2 dstport 4789 id $3 ttl 255
+    /usr/sbin/ip link set up dev vxlan_AS$1
 }
 
 function getIP {
     set -o pipefail #optional
     ip route get 8.8.8.8 | head -1 | cut -d' ' -f8
 }
+
 
 
 for file in $directory
@@ -44,7 +47,7 @@ echo "Checking If Interface Exists"
 
 
 
-if check_eth eoip_AS${ASN}; then
+if check_eth vxlan_AS${ASN}; then
 echo "Interface Exists, Check Bridge"
 intExist="true"
 else
@@ -56,7 +59,7 @@ fi
 
 if [ $intExist = "true" ]; then
 echo "Checking Bridge"
-if check_bridge eoip_AS${ASN}; then
+if check_bridge vxlan_AS${ASN}; then
 echo "Interface is on Bridge, Nothing to do"
 briExist="true"
 else
@@ -69,7 +72,7 @@ fi
 
 if [ $intExist = "false" ]; then
 echo "Create Interface"
-create_eoip ${ASN}
+create_vxlan ${ASN} ${ipAddress} ${TunnelID}
 create_bridge ${ASN}
 fi
 
