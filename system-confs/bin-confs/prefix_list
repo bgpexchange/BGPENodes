@@ -16,6 +16,7 @@ for v4ASN in *; do
     fi
 done
 echo "];" >> /opt/ixpcontrol/data/routeserver/PREFIX/prefixes_v4.conf;
+sed 'x;${s/,$//;p;x;};1d' /opt/ixpcontrol/data/routeserver/PREFIX/prefixes_v4.conf
 echo "IPv6 Generation"
 echo "define PREFIX_BGPEX = [" > /opt/ixpcontrol/data/routeserver/PREFIX/prefixes_v6.conf;
 for v6ASN in *; do
@@ -30,3 +31,4 @@ for v6ASN in *; do
     fi
 done
 echo "];" >> /opt/ixpcontrol/data/routeserver/PREFIX/prefixes_v6.conf;
+sed 'x;${s/,$//;p;x;};1d' /opt/ixpcontrol/data/routeserver/PREFIX/prefixes_v6.conf
