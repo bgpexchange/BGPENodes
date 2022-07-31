@@ -1,0 +1,24 @@
+#!/bin/bash
+HN=`hostname`
+cd /tmp/
+git clone https://github.com/nat-lab/eoip
+cd eoip
+make && make install
+service bird stop && service bird6 stop
+apt remove bird -y
+cd /etc/bird/
+rm -rf bird.conf && rm -rf bird6.conf
+cat > /etc/bird/bird.conf <<EOL
+include "/opt/ixpctl/conf/bird/bird.conf";
+EOL
+apt-get install bird2/bullseye-backports -y
+cd /opt/github && git rebase
+cd /opt/ixpcontrol/ && mkdir ixpctl
+cd /opt/
+ln -s /opt/github/nodes/$HN/ixpctl ixpctl
+cd ixpctl && mkdir bin && mkdir conf
+cd conf && mkdir bird && mkdir interfaces
+cd bird
+cp /opt/github/system-confs/bird2conf.tar .
+tar zxvf bird2conf.tar
+rm -rf bird2conf.tar
